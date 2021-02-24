@@ -1,0 +1,49 @@
+//Full Nand-implementation
+
+// elementary gates
+Nand [Transistor:4]
+Not [Nand:1]
+And [Nand:2]
+Or [Nand:3]
+Xor [Nand:4] // 4 Nands implementation
+Mux [Nand:4]
+DMux [Nand:5]
+
+// multi-bit versions
+Not16 [Not:16]
+And16 [And:16]
+Or16 [Or:16]
+Or8Way [Or:7]
+DMux4Way [DMux:3]
+DMux8Way [DMux:1, DMux4Way:2]
+Mux16 [Mux:16]
+Mux4Way16 [Mux16:3]
+Mux8Way16 [Mux4Way16:2, Mux16:1]
+
+// adders
+HalfAdder [Xor:1, And:1]
+FullAdder [Xor:2, Nand:3]
+Add16 [HalfAdder:1, FullAdder:15]  // HalfAdder: is used for LSB
+Inc16 [HalfAdder:16]	// HalfAdders are used instead of FullAdders
+ALU [Not16:3, Add16:1, And16:1, Mux16:6, Or8Way:2, Or:1, Not:1]	// 15 chips implementation
+
+// memory elements
+DFF [Nand:9]
+Bit [Mux:1, DFF:1]
+Register [Bit:16]
+RAM8 [DMux8Way:1, Register:8, Mux8Way16:1]
+RAM64 [DMux8Way:1, RAM8:8, Mux8Way16:1]
+RAM512 [DMux8Way:1, RAM64:8, Mux8Way16:1]
+RAM4K [DMux8Way:1, RAM64:8, RAM512:1]
+RAM16K [DMux8Way:1, RAM4K:4, RAM512:1]
+PC [Inc16:1, Mux16:3, Register:1]
+Screen [DMux:1, RAM4K:2, Mux:1]
+Keyboard [Register:1]
+ARegister [Register:1]
+DRegister [Register:1]
+
+// main elements
+Memory [DMux4Way:1, Or:1, RAM16K:1, Screen:1, Keyboard:1, Mux4Way16:1]
+CPU [Mux16:2, Not:3, And:7, Or:4, ARegister:1, DRegister:1, ALU:1, PC:1]
+ROM32K [DMux:1, RAM16K:2, Mux:1]
+Computer [ROM32K:1, CPU:1, Memory:1]
